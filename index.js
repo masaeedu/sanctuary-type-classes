@@ -2019,6 +2019,24 @@
     return Foldable.methods.reduce(foldable)(f, x);
   }
 
+  //# foldMap :: (Monoid m, Foldable f) => (TypeRep m, a -> m, f a) -> m
+  //.
+  //. Deconstructs a foldable by mapping every element to a monoid and
+  //. concatenating the results.
+  //.
+  //. This function is derived from [`reduce`](#reduce), [`concat`](#concat)
+  //. and [`empty`](#empty).
+  //.
+  //. ```javascript
+  //. > foldMap(String, x => x.toString(), [1, 2, 3])
+  //. '123'
+  //. ```
+  function foldMap(typeRep, f, foldable) {
+    return reduce(function(b, a) {
+      return concat(b, f(a));
+    }, empty(typeRep), foldable);
+  }
+
   //# size :: Foldable f => f a -> Integer
   //.
   //. Returns the number of elements of the given structure.
@@ -2347,6 +2365,7 @@
     alt: alt,
     zero: zero,
     reduce: reduce,
+    foldMap: foldMap,
     size: size,
     elem: elem,
     reverse: reverse,
