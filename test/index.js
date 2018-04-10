@@ -1171,6 +1171,11 @@ test('reduce', function() {
   eq(Z.reduce(Z.concat, 'x', Cons('a', Cons('b', Cons('c', Nil)))), 'xabc');
 });
 
+test('foldMap', function() {
+  eq(Z.foldMap.length, 3);
+  eq(Z.foldMap.name, 'foldMap');
+});
+
 test('size', function() {
   eq(Z.size.length, 1);
   eq(Z.size.name, 'size');
