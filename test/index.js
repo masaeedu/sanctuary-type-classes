@@ -1209,6 +1209,32 @@ test('elem', function() {
 test('foldMap', function() {
   eq(Z.foldMap.length, 3);
   eq(Z.foldMap.name, 'foldMap');
+
+  // Monoid instance for functions of type a -> a corresponding
+  // to reverse function composition
+  function DualEndo(f) {
+    if (!(this instanceof DualEndo)) return new DualEndo(f);
+    this.runEndo = f;
+  }
+  DualEndo['fantasy-land/empty'] = function() { return DualEndo(x => x); };
+  DualEndo.prototype['fantasy-land/concat'] = function(g) { return DualEndo(a => g.runEndo(this.runEndo(a))); };
+
+  // Derive reduce (foldl) from foldMap
+  function reduce(f, z, x) {
+    function mmap(a) { return DualEndo(function(b) { return f(b, a); }); }
+    var finalEndo = Z.foldMap(DualEndo, mmap, x);
+    return finalEndo.runEndo(z);
+  }
+
+  // Test derived reduce behaves identically to Z.reduce
+  eq(reduce(Z.concat, 'x', []), 'x');
+  eq(reduce(Z.concat, 'x', ['a', 'b', 'c']), 'xabc');
+  eq(reduce(add, 0, {}), 0);
+  eq(reduce(add, 0, {a: 1, b: 2, c: 3, d: 4, e: 5}), 15);
+  eq(reduce(function(xs, x) { return Z.concat(xs, [x]); }, [], {a: 1, b: 2, c: 3}), [1, 2, 3]);
+  eq(reduce(function(xs, x) { return Z.concat(xs, [x]); }, [], {c: 3, b: 2, a: 1}), [1, 2, 3]);
+  eq(reduce(Z.concat, 'x', Nil), 'x');
+  eq(reduce(Z.concat, 'x', Cons('a', Cons('b', Cons('c', Nil)))), 'xabc');
 });
 
 test('reverse', function() {
