@@ -1157,18 +1157,22 @@ test('zero', function() {
   eq(Z.zero(Maybe), Nothing);
 });
 
+function testReduce(reduce) {
+  eq(reduce(Z.concat, 'x', []), 'x');
+  eq(reduce(Z.concat, 'x', ['a', 'b', 'c']), 'xabc');
+  eq(reduce(add, 0, {}), 0);
+  eq(reduce(add, 0, {a: 1, b: 2, c: 3, d: 4, e: 5}), 15);
+  eq(reduce(function(xs, x) { return Z.concat(xs, [x]); }, [], {a: 1, b: 2, c: 3}), [1, 2, 3]);
+  eq(reduce(function(xs, x) { return Z.concat(xs, [x]); }, [], {c: 3, b: 2, a: 1}), [1, 2, 3]);
+  eq(reduce(Z.concat, 'x', Nil), 'x');
+  eq(reduce(Z.concat, 'x', Cons('a', Cons('b', Cons('c', Nil)))), 'xabc');
+}
+
 test('reduce', function() {
   eq(Z.reduce.length, 3);
   eq(Z.reduce.name, 'reduce');
 
-  eq(Z.reduce(Z.concat, 'x', []), 'x');
-  eq(Z.reduce(Z.concat, 'x', ['a', 'b', 'c']), 'xabc');
-  eq(Z.reduce(add, 0, {}), 0);
-  eq(Z.reduce(add, 0, {a: 1, b: 2, c: 3, d: 4, e: 5}), 15);
-  eq(Z.reduce(function(xs, x) { return Z.concat(xs, [x]); }, [], {a: 1, b: 2, c: 3}), [1, 2, 3]);
-  eq(Z.reduce(function(xs, x) { return Z.concat(xs, [x]); }, [], {c: 3, b: 2, a: 1}), [1, 2, 3]);
-  eq(Z.reduce(Z.concat, 'x', Nil), 'x');
-  eq(Z.reduce(Z.concat, 'x', Cons('a', Cons('b', Cons('c', Nil)))), 'xabc');
+  testReduce(Z.reduce);
 });
 
 test('size', function() {
@@ -1229,14 +1233,7 @@ test('foldMap', function() {
   }
 
   // Test derived reduce behaves identically to Z.reduce
-  eq(reduce(Z.concat, 'x', []), 'x');
-  eq(reduce(Z.concat, 'x', ['a', 'b', 'c']), 'xabc');
-  eq(reduce(add, 0, {}), 0);
-  eq(reduce(add, 0, {a: 1, b: 2, c: 3, d: 4, e: 5}), 15);
-  eq(reduce(function(xs, x) { return Z.concat(xs, [x]); }, [], {a: 1, b: 2, c: 3}), [1, 2, 3]);
-  eq(reduce(function(xs, x) { return Z.concat(xs, [x]); }, [], {c: 3, b: 2, a: 1}), [1, 2, 3]);
-  eq(reduce(Z.concat, 'x', Nil), 'x');
-  eq(reduce(Z.concat, 'x', Cons('a', Cons('b', Cons('c', Nil)))), 'xabc');
+  testReduce(reduce);
 });
 
 test('reverse', function() {
