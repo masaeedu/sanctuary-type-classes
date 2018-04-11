@@ -1216,8 +1216,10 @@ test('foldMap', function() {
     if (!(this instanceof DualEndo)) return new DualEndo(f);
     this.runEndo = f;
   }
-  DualEndo['fantasy-land/empty'] = function() { return DualEndo(x => x); };
-  DualEndo.prototype['fantasy-land/concat'] = function(g) { return DualEndo(a => g.runEndo(this.runEndo(a))); };
+  DualEndo['fantasy-land/empty'] = function() { return DualEndo(identity); };
+  DualEndo.prototype['fantasy-land/concat'] = function(other) {
+    return DualEndo(a => other.runEndo(this.runEndo(a)));
+  };
 
   // Derive reduce (foldl) from foldMap
   function reduce(f, z, x) {
