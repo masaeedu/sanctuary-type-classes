@@ -1171,11 +1171,6 @@ test('reduce', function() {
   eq(Z.reduce(Z.concat, 'x', Cons('a', Cons('b', Cons('c', Nil)))), 'xabc');
 });
 
-test('foldMap', function() {
-  eq(Z.foldMap.length, 3);
-  eq(Z.foldMap.name, 'foldMap');
-});
-
 test('size', function() {
   eq(Z.size.length, 1);
   eq(Z.size.name, 'size');
@@ -1209,6 +1204,11 @@ test('elem', function() {
   eq(Z.elem(0, Just(0)), true);
   eq(Z.elem(0, Just(1)), false);
   eq(Z.elem(0, Nothing), false);
+});
+
+test('foldMap', function() {
+  eq(Z.foldMap.length, 3);
+  eq(Z.foldMap.name, 'foldMap');
 });
 
 test('reverse', function() {
